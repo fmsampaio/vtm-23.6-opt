@@ -50,6 +50,7 @@
 #include "CommonLib/dtrace_buffer.h"
 
 #include "TimeProfiler.h"
+#include "OptTechDT.h"
 
 #include <stdio.h>
 #include <cmath>
@@ -704,6 +705,43 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
     m_bestBcwCost.fill(std::numeric_limits<double>::max());
     m_bestBcwIdx.fill(BCW_NUM);
   }
+
+  
+  if(tempCS->slice->getSliceType() != I_SLICE) { //improve it here
+
+    if(partitioner.currQtDepth == partitioner.currDepth && partitioner.currArea().lwidth() == 8 && partitioner.currArea().lheight() == 8) {
+      
+      //int refPoc = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC();
+      PelUnitBuf recoBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
+      // PelUnitBuf origBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getOrigBuf();
+      PelUnitBuf origBuff = tempCS->slice->getPic()->getOrigBuf();
+
+      int xBlk = partitioner.currArea().lx();
+      int yBlk = partitioner.currArea().ly();
+      int wBlk = partitioner.currArea().lwidth();
+      int hBlk = partitioner.currArea().lheight();
+      
+      // std::cout << "[DBG] (" << partitioner.currArea().lx() << "," << partitioner.currArea().ly() << ")" ;
+      // std::cout << " W:" << partitioner.currArea().lwidth() << " H:" << partitioner.currArea().lheight();
+      // std::cout << " RefPOC: " << tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC() << std::endl;
+      
+      // std::cout << "Depth: " << partitioner.currDepth;
+      // std::cout << " | QtDepth: " << partitioner.currQtDepth;
+      // std::cout << " | BtDepth: " << partitioner.currBtDepth;
+      // std::cout << " | TrDepth: " << partitioner.currTrDepth;
+      // std::cout << " | MtDepth: " << partitioner.currMtDepth;
+      // std::cout << " | Subdiv: " << partitioner.currSubdiv << std::endl;
+     
+      // Felipe: Variance Calculation  
+      // std::cout << "BlockVar: " << OptTechDT::calculateBlockVariance(xBlk, yBlk, wBlk, hBlk, origBuff) << std::endl;
+      // std::cout << "DiffVar: " << OptTechDT::calculateDiffVariance(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff) << std::endl;
+
+      OptTechDT::debugVarianceCalculation(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff);
+    
+    }
+    
+  }
+
   do
   {
     for (int i = compBegin; i < (compBegin + numComp); i++)
