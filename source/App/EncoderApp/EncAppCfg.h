@@ -1157,6 +1157,7 @@ public:
   int getSourceHeight() { return m_sourceHeight; }
   int getFramesToBeEncoded() { return m_framesToBeEncoded; }
   std::string getEncoderConfig() { return m_encoderConfig; }
+  int getQP() { return m_iQP; }
 
 };
 

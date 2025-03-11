@@ -1,14 +1,15 @@
 #include "OptTechDT.h"
 
-int OptTechDT::width, OptTechDT::height, OptTechDT::numOfFrames, OptTechDT::depthMapAllocSize;
+int OptTechDT::width, OptTechDT::height, OptTechDT::numOfFrames, OptTechDT::depthMapAllocSize, OptTechDT::quantPar;
 std::map<int, int*> OptTechDT::depthMaps;
 int OptTechDT::encoderConfig;
 
-void OptTechDT::init(int w, int h, int nf, std::string encCfg) {
+void OptTechDT::init(int w, int h, int nf, std::string encCfg, int qp) {
     width = w;
     height = h;
     numOfFrames = nf;
     encoderConfig = (encCfg == "RA") ? ENCODER_RA_CONFIG : ENCODER_LD_CONFIG;
+    quantPar = qp;
 
     // std::cout << "[DBG] Encoder Configuration: " << encoderConfig << " " << encCfg << std::endl;
 
@@ -124,11 +125,13 @@ void OptTechDT::updateDepthMap(int framePoc, int xBlk, int yBlk, int wBlk, int h
     }
 }
 
-bool OptTechDT::isPreviousSplit(int framePoc, int xCU, int yCU, int currDepth) {
-    int pos = xCU + (yCU * (width / DEPTH_MAP_RESOLUTION));
-    int refDepth = depthMaps[framePoc][pos];
+int OptTechDT::isPreviousSplit(int currFramePoc, int xCU, int yCU, int currDepth) {
+    int refFramePoc = REFERENCE_FRAME_ORDER[encoderConfig][currFramePoc];
 
-    return refDepth > currDepth;
+    int pos = xCU + (yCU * (width / DEPTH_MAP_RESOLUTION));
+    int refDepth = depthMaps[refFramePoc][pos];
+
+    return (refDepth > currDepth) ? 1 : 0;
 }
 
 void OptTechDT::reportDepthMap(int framePoc) {
@@ -145,4 +148,18 @@ void OptTechDT::reportDepthMap(int framePoc) {
         }
         std::cout << std::endl;
     }        
+}
+
+PelUnitBuf OptTechDT::getRefPicBuf(int currFramePoc, Slice* slice) {
+    int refFramePoc = REFERENCE_FRAME_ORDER[encoderConfig][currFramePoc];
+
+    for (int i = 0; i < MAX_NUM_REF; i++) {
+        if(slice->getRefPOC(REF_PIC_LIST_0, i) == refFramePoc) {
+            return slice->getRefPic(REF_PIC_LIST_0, i)->getRecoBuf(PIC_RECONSTRUCTION);
+        }
+    }
+
+    std::cout << "[ERR] No reference picture found!\n";
+    return slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
+
 }

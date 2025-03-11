@@ -746,6 +746,51 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
     }    
   }
 #endif
+  
+  
+  if(tempCS->slice->getSliceType() != I_SLICE) { //improve it here
+    if(partitioner.currQtDepth == partitioner.currDepth) {
+      // PelUnitBuf recoBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
+      
+
+      int currQtDepth = partitioner.currQtDepth;
+
+      
+      int currPoc = tempCS->slice->getPOC();
+      // int refPoc = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC();
+
+      PelUnitBuf recoBuff = OptTechDT::getRefPicBuf(currPoc, tempCS->slice);
+      PelUnitBuf origBuff = tempCS->slice->getPic()->getOrigBuf();
+
+      int xBlk = partitioner.currArea().lx();
+      int yBlk = partitioner.currArea().ly();
+      int wBlk = partitioner.currArea().lwidth();
+      int hBlk = partitioner.currArea().lheight();
+      
+      // Felipe: features extraction
+
+      // QP
+      int ft_qp = OptTechDT::quantPar;
+      
+      // Previous split
+      int ft_previousSplit = OptTechDT::isPreviousSplit(currPoc, xBlk, yBlk, currQtDepth);
+
+      // Block variance
+      double ft_blockVar = OptTechDT::calculateBlockVariance(xBlk, yBlk, wBlk, hBlk, origBuff);
+      
+      // Diff variance
+      double ft_diffVar = OptTechDT::calculateDiffVariance(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff);
+
+      std::cout << std::endl;
+      std::cout << "[DBG] Features extraction: " << std::endl;
+      std::cout << "QtDepth: " << currQtDepth << std::endl;
+      std::cout << "QP: " << ft_qp << std::endl;
+      std::cout << "PrevSplit: " << ft_previousSplit << std::endl;
+      std::cout << "BlockVar: " << ft_blockVar << std::endl;
+      std::cout << "DiffVar: " << ft_diffVar << std::endl;
+
+    }
+  }
 
   do
   {

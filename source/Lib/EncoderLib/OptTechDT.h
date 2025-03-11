@@ -2,7 +2,7 @@
 
 #include "CommonLib/Picture.h"
 
-#define DBG_REPORT_DEPTH_MAPS 1
+#define DBG_REPORT_DEPTH_MAPS 0
 #define DBG_REPORT_VARIANCE 0
 
 #define DEPTH_MAP_RESOLUTION 4
@@ -22,7 +22,9 @@ class OptTechDT {
         static int encoderConfig;
 
     public:
-        static void init(int w, int h, int nf, std::string encCfg);
+        static int quantPar;
+
+        static void init(int w, int h, int nf, std::string encCfg, int qp);
 
         static double calculateDiffVariance(int xBlk, int yBlk, int wBlk, int hBlk, PelUnitBuf origBuff, PelUnitBuf recoBuff);
         static double calculateBlockVariance(int xBlk, int yBlk, int wBlk, int hBlk, PelUnitBuf origBuff);
@@ -31,5 +33,7 @@ class OptTechDT {
         static void updateDepthMap(int framePoc, int xBlk, int yBlk, int wBlk, int hBlk, int depth);
         static void reportDepthMap(int framePoc);
 
-        static bool isPreviousSplit(int refFramePoc, int xCU, int yCU, int currDepth);
+        static int isPreviousSplit(int refFramePoc, int xCU, int yCU, int currDepth);
+
+        static PelUnitBuf getRefPicBuf(int currFramePoc, Slice* slice);
 };
