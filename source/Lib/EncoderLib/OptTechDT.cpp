@@ -2,11 +2,16 @@
 
 int OptTechDT::width, OptTechDT::height, OptTechDT::numOfFrames, OptTechDT::depthMapAllocSize;
 std::map<int, int*> OptTechDT::depthMaps;
+int OptTechDT::encoderConfig;
 
-void OptTechDT::init(int w, int h, int nf) {
+void OptTechDT::init(int w, int h, int nf, std::string encCfg) {
     width = w;
     height = h;
     numOfFrames = nf;
+    encoderConfig = (encCfg == "RA") ? ENCODER_RA_CONFIG : ENCODER_LD_CONFIG;
+
+    // std::cout << "[DBG] Encoder Configuration: " << encoderConfig << " " << encCfg << std::endl;
+
     depthMapAllocSize = (width / DEPTH_MAP_RESOLUTION) * (height / DEPTH_MAP_RESOLUTION);
 
     for (int f = 0; f < numOfFrames; f++) {
@@ -14,6 +19,7 @@ void OptTechDT::init(int w, int h, int nf) {
     }       
      
 }
+
 
 double OptTechDT::calculateDiffVariance(int xBlk, int yBlk, int wBlk, int hBlk, PelUnitBuf origBuff, PelUnitBuf recoBuff) { 
     int startx = xBlk;

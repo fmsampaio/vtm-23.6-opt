@@ -217,7 +217,7 @@ int main(int argc, char* argv[])
     layerIdx++;
   } while( layerIdx < pcEncApp.size() );
 
-  OptTechDT::init( pcEncApp[0]->getSourceWidth() , pcEncApp[0]->getSourceHeight(), pcEncApp[0]->getFramesToBeEncoded() );
+  OptTechDT::init( pcEncApp[0]->getSourceWidth() , pcEncApp[0]->getSourceHeight(), pcEncApp[0]->getFramesToBeEncoded(), pcEncApp[0]->getEncoderConfig() );
 
   delete[] layerArgv;
 

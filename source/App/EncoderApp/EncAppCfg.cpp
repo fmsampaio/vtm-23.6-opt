@@ -1789,6 +1789,7 @@ bool EncAppCfg::parseCfg( int argc, char* argv[] )
   ( "MaxTidILRefPicsPlusOneLayerId%d",                m_maxTidILRefPicsPlus1Str, std::string(""), MAX_VPS_LAYERS, "Maximum temporal ID for inter-layer reference pictures plus 1 of i-th layer, 0 for IRAP only")
   ( "RPLofDepLayerInSH",                              m_rplOfDepLayerInSh,                      false, "define Reference picture lists in slice header instead of SPS for dependant layers")
   ( "ExplicitILRP",                                   m_explicitILRP,                           false, "Explicitly define Inter-Layer Reference pictures in GOP entry")
+  ("EncoderConfig",                                   m_encoderConfig,                std::string(""), "Encoder configuration (RA, LD, AI) to pass to optimization technique configuration.");
     ;
 
   opts.addOptions()

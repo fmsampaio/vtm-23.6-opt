@@ -1110,6 +1110,8 @@ protected:
   Level::Name m_levelPtl[MAX_NUM_OLSS];
   int         m_olsPtlIdx[MAX_NUM_OLSS];
 
+  std::string m_encoderConfig;
+
 #if EXTENSION_360_VIDEO
   TExt360AppEncCfg m_ext360;
   friend class TExt360AppEncCfg;
@@ -1154,6 +1156,7 @@ public:
   int getSourceWidth() { return m_sourceWidth; }
   int getSourceHeight() { return m_sourceHeight; }
   int getFramesToBeEncoded() { return m_framesToBeEncoded; }
+  std::string getEncoderConfig() { return m_encoderConfig; }
 
 };
 
