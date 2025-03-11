@@ -1151,6 +1151,10 @@ public:
   void  destroy   ();                                         ///< destroy option handling class
   bool  parseCfg  ( int argc, char* argv[] );                ///< parse configuration file to fill member variables
 
+  int getSourceWidth() { return m_sourceWidth; }
+  int getSourceHeight() { return m_sourceHeight; }
+  int getFramesToBeEncoded() { return m_framesToBeEncoded; }
+
 };
 
 //! \}

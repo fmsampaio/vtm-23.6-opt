@@ -41,6 +41,7 @@
 #include <ctime>
 
 #include "EncoderLib/EncLibCommon.h"
+#include "EncoderLib/OptTechDT.h"
 #include "EncApp.h"
 #include "Utilities/program_options_lite.h"
 #include "CommonLib/TimeProfiler.h"
@@ -215,6 +216,8 @@ int main(int argc, char* argv[])
 
     layerIdx++;
   } while( layerIdx < pcEncApp.size() );
+
+  OptTechDT::init( pcEncApp[0]->getSourceWidth() , pcEncApp[0]->getSourceHeight(), pcEncApp[0]->getFramesToBeEncoded() );
 
   delete[] layerArgv;
 

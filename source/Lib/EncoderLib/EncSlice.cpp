@@ -44,6 +44,7 @@
 #include "CommonLib/dtrace_blockstatistics.h"
 #endif
 
+#include "OptTechDT.h"
 
 #include <math.h>
 
@@ -1611,6 +1612,13 @@ void EncSlice::compressSlice( Picture* pcPic, const bool bCompressEntireSlice, c
   {
     m_pcLib->checkPltStats(pcPic);
   }
+
+#if DBG_REPORT_DEPTH_MAPS
+  // Felipe: reporting depth maps
+  std::cout << "[DBG] Reporting depth map " << pcSlice->getPOC() << "...\n";
+  OptTechDT::reportDepthMap(pcPic->poc);
+#endif
+
 }
 
 void EncSlice::checkDisFracMmvd( Picture* pcPic, uint32_t startCtuTsAddr, uint32_t boundingCtuTsAddr )

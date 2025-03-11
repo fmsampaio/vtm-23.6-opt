@@ -323,6 +323,23 @@ void EncCu::compressCtu(CodingStructure &cs, const UnitArea &area, const unsigne
   m_CurrCtx                  = 0;
 
 
+  // Felipe: fill depth map
+  const ChannelType chType = ChannelType( 0 );
+  for( const CodingUnit &cu : cs.traverseCUs( CS::getArea( cs, area, chType ), chType ) ) {
+    int framePoc = cu.slice->getPOC();
+    int xBlk = cu.lx();
+    int yBlk = cu.ly();
+    int wBlk = cu.lwidth();
+    int hBlk = cu.lheight();
+    int depth = (int) cu.qtDepth;
+
+#if DBG_REPORT_DEPTH_MAPS
+    std::cout << "[DBG] Updating depth map... Frame (" << framePoc << ") CU (" << xBlk << "," << yBlk << ")\n";
+#endif
+
+    OptTechDT::updateDepthMap(framePoc, xBlk, yBlk, wBlk, hBlk, depth);
+  }
+
   // Ensure that a coding was found
   // Selected mode's RD-cost must be not MAX_DOUBLE.
   CHECK( bestCS->cus.empty()                                   , "No possible encoding found" );
@@ -706,41 +723,29 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
     m_bestBcwIdx.fill(BCW_NUM);
   }
 
-  
+#if DBG_REPORT_VARIANCE 
   if(tempCS->slice->getSliceType() != I_SLICE) { //improve it here
-
     if(partitioner.currQtDepth == partitioner.currDepth && partitioner.currArea().lwidth() == 8 && partitioner.currArea().lheight() == 8) {
-      
-      //int refPoc = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC();
-      PelUnitBuf recoBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
+
+      // int refPoc = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC();
       // PelUnitBuf origBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getOrigBuf();
+      
+      PelUnitBuf recoBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
       PelUnitBuf origBuff = tempCS->slice->getPic()->getOrigBuf();
 
       int xBlk = partitioner.currArea().lx();
       int yBlk = partitioner.currArea().ly();
       int wBlk = partitioner.currArea().lwidth();
       int hBlk = partitioner.currArea().lheight();
-      
-      // std::cout << "[DBG] (" << partitioner.currArea().lx() << "," << partitioner.currArea().ly() << ")" ;
-      // std::cout << " W:" << partitioner.currArea().lwidth() << " H:" << partitioner.currArea().lheight();
-      // std::cout << " RefPOC: " << tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getPOC() << std::endl;
-      
-      // std::cout << "Depth: " << partitioner.currDepth;
-      // std::cout << " | QtDepth: " << partitioner.currQtDepth;
-      // std::cout << " | BtDepth: " << partitioner.currBtDepth;
-      // std::cout << " | TrDepth: " << partitioner.currTrDepth;
-      // std::cout << " | MtDepth: " << partitioner.currMtDepth;
-      // std::cout << " | Subdiv: " << partitioner.currSubdiv << std::endl;
-     
+   
       // Felipe: Variance Calculation  
       // std::cout << "BlockVar: " << OptTechDT::calculateBlockVariance(xBlk, yBlk, wBlk, hBlk, origBuff) << std::endl;
       // std::cout << "DiffVar: " << OptTechDT::calculateDiffVariance(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff) << std::endl;
 
       OptTechDT::debugVarianceCalculation(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff);
-    
-    }
-    
+    }    
   }
+#endif
 
   do
   {
