@@ -1,6 +1,9 @@
 #include <fstream>
+#include <set>
 
 #include "CommonLib/Picture.h"
+
+#define ENABLE_OPT_TECH_DT 1
 
 #define DBG_REPORT_DEPTH_MAPS 0
 #define DBG_REPORT_VARIANCE 0
@@ -21,8 +24,11 @@ class OptTechDT {
         static std::map<int, int*> depthMaps;
         static int encoderConfig;
 
+        static std::set<int> dbgRefPics[100];
+
     public:
         static int quantPar;
+        static bool skipCheckRD, confidenceDT;
 
         static void init(int w, int h, int nf, std::string encCfg, int qp);
 
@@ -36,4 +42,7 @@ class OptTechDT {
         static int isPreviousSplit(int refFramePoc, int xCU, int yCU, int currDepth);
 
         static PelUnitBuf getRefPicBuf(int currFramePoc, Slice* slice);
+        static void reportRefPicsDbg();
+
+        static void performModelDT(int currQtDepth, int ft_qp, double ft_diffVar, int ft_previousSplit, int ft_height);
 };
