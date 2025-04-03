@@ -323,6 +323,11 @@ void EncCu::compressCtu(CodingStructure &cs, const UnitArea &area, const unsigne
   m_CurrCtx                  = 0;
 
 #if ENABLE_OPT_TECH_DT
+
+#if ENABLE_TIME_PROFILE
+  TimeProfiler::start(FEATURES_EXTRACTION);
+#endif
+
   // Felipe: fill depth map
   const ChannelType chType = ChannelType( 0 );
   for( const CodingUnit &cu : cs.traverseCUs( CS::getArea( cs, area, chType ), chType ) ) {
@@ -338,6 +343,10 @@ void EncCu::compressCtu(CodingStructure &cs, const UnitArea &area, const unsigne
 #endif
 
     OptTechDT::updateDepthMap(framePoc, xBlk, yBlk, wBlk, hBlk, depth);
+
+#if ENABLE_TIME_PROFILE
+  TimeProfiler::start(FEATURES_EXTRACTION);
+#endif
   }
 #endif
 
@@ -752,6 +761,10 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
   if(tempCS->slice->getSliceType() != I_SLICE) { //improve it here
     if(partitioner.currQtDepth == partitioner.currDepth) {
       // PelUnitBuf recoBuff = tempCS->slice->getRefPic(REF_PIC_LIST_0, 0)->getRecoBuf(PIC_RECONSTRUCTION);
+
+#if ENABLE_TIME_PROFILE
+      TimeProfiler::start(FEATURES_EXTRACTION);
+#endif
       
       int currQtDepth = partitioner.currQtDepth;
       
@@ -781,6 +794,10 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
       
       // Diff variance
       double ft_diffVar = OptTechDT::calculateDiffVariance(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff);
+
+#if ENABLE_TIME_PROFILE
+      TimeProfiler::stop(FEATURES_EXTRACTION);
+#endif
 
       OptTechDT::performModelDT(currQtDepth, ft_qp, ft_diffVar, ft_previousSplit, ft_height);
 

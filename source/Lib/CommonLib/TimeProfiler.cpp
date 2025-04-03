@@ -23,7 +23,10 @@ void TimeProfiler::init()  {
     stageToString[QT_LEVEL_3] = "QT_3";
     stageToString[QT_LEVEL_4] = "QT_4";
     stageToString[INTER_OVERALL] = "INTER";
-    stageToString[ENCODER_OVERALL] ="ENCODER";
+    stageToString[ENCODER_OVERALL] = "ENCODER";
+
+    stageToString[FEATURES_EXTRACTION] = "FEATURES_EXTRACTION";
+    stageToString[DT_MODEL] = "DT_MODEL";
 }
 
 void TimeProfiler::start( STAGE s ) {

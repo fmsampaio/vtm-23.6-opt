@@ -4,7 +4,7 @@ int OptTechDT::width, OptTechDT::height, OptTechDT::numOfFrames, OptTechDT::dept
 std::map<int, int*> OptTechDT::depthMaps;
 int OptTechDT::encoderConfig;
 
-bool OptTechDT::skipCheckRD, confidenceDT;
+bool OptTechDT::skipCheckRD, OptTechDT::confidenceDT;
 
 std::set<int> OptTechDT::dbgRefPics[100];
 
@@ -187,6 +187,10 @@ void OptTechDT::reportRefPicsDbg() {
 }
 
 void OptTechDT::performModelDT(int currQtDepth, int ft_qp, double ft_diffVar, int ft_previousSplit, int ft_height) {
+#if ENABLE_TIME_PROFILE
+  TimeProfiler::start(DT_MODEL);
+#endif
+
   switch(currQtDepth) {
     case 0: //128x128
       if (ft_previousSplit <= 0.5000) {
@@ -448,4 +452,7 @@ void OptTechDT::performModelDT(int currQtDepth, int ft_qp, double ft_diffVar, in
       }
       
   }
+#if ENABLE_TIME_PROFILE
+  TimeProfiler::stop(DT_MODEL);
+#endif
 }

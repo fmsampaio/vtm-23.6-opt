@@ -2,6 +2,7 @@
 #include <set>
 
 #include "CommonLib/Picture.h"
+#include "CommonLib/TimeProfiler.h"
 
 #define ENABLE_OPT_TECH_DT 1
 

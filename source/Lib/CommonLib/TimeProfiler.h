@@ -12,6 +12,9 @@
 #include <chrono>
 #include <map>
 
+#ifndef __TIME_PROFILER__
+#define __TIME_PROFILER__
+
 enum STAGE {  
   QT_LEVEL_0 = 0,
   QT_LEVEL_1 = 1,
@@ -21,7 +24,10 @@ enum STAGE {
   INTER_OVERALL = 5,
   ENCODER_OVERALL = 6,
 
-  NUM_STAGES = 7
+  FEATURES_EXTRACTION = 7,
+  DT_MODEL = 8,
+
+  NUM_STAGES = 9
 };
 
 typedef std::milli rep;
@@ -43,3 +49,5 @@ class TimeProfiler {
     static void stop( STAGE s );
     static void report();
 };
+
+#endif
