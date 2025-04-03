@@ -23,13 +23,14 @@ class OptTechDT {
     private:
         static int width, height, numOfFrames, depthMapAllocSize;
         static std::map<int, int*> depthMaps;
-        static int encoderConfig;
+        
 
         static std::set<int> dbgRefPics[100];
 
     public:
         static int quantPar;
         static bool skipCheckRD, confidenceDT;
+        static int encoderConfig;
 
         static void init(int w, int h, int nf, std::string encCfg, int qp);
 
@@ -45,5 +46,5 @@ class OptTechDT {
         static PelUnitBuf getRefPicBuf(int currFramePoc, Slice* slice);
         static void reportRefPicsDbg();
 
-        static void performModelDT(int currQtDepth, int ft_qp, double ft_diffVar, int ft_previousSplit, int ft_height);
+        static void performModelDT(int currQtDepth, int ft_qp, double ft_diffVar, double ft_blockVar, int ft_previousSplit, int ft_height, int ft_config);
 };

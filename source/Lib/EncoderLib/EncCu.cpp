@@ -790,16 +790,19 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
       int ft_previousSplit = OptTechDT::isPreviousSplit(currPoc, xBlk, yBlk, currQtDepth);
 
       // Block variance
-      // double ft_blockVar = OptTechDT::calculateBlockVariance(xBlk, yBlk, wBlk, hBlk, origBuff);
+      double ft_blockVar = OptTechDT::calculateBlockVariance(xBlk, yBlk, wBlk, hBlk, origBuff);
       
       // Diff variance
       double ft_diffVar = OptTechDT::calculateDiffVariance(xBlk, yBlk, wBlk, hBlk, origBuff, recoBuff);
+
+      // Encoder config
+      int ft_config = OptTechDT::encoderConfig;
 
 #if ENABLE_TIME_PROFILE
       TimeProfiler::stop(FEATURES_EXTRACTION);
 #endif
 
-      OptTechDT::performModelDT(currQtDepth, ft_qp, ft_diffVar, ft_previousSplit, ft_height);
+      OptTechDT::performModelDT(currQtDepth, ft_qp, ft_diffVar, ft_blockVar, ft_previousSplit, ft_height, ft_config);
 
     }
   }
