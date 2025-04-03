@@ -857,7 +857,7 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
     if( currTestMode.type == ETM_INTER_ME )
     {
 #if ENABLE_OPT_TECH_DT
-      if(! OptTechDT::skipCheckRD) {
+      if(! (OptTechDT::skipCheckRD && OptTechDT::confidenceDT) ) {
 #endif
         if( ( currTestMode.opts & ETO_IMV ) != 0 )
         {
@@ -887,7 +887,7 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
     else if (currTestMode.type == ETM_HASH_INTER)
     {
 #if ENABLE_OPT_TECH_DT
-      if(! OptTechDT::skipCheckRD) {
+      if(! (OptTechDT::skipCheckRD && OptTechDT::confidenceDT) ) {
 #endif
         xCheckRDCostHashInter( tempCS, bestCS, partitioner, currTestMode );
         splitRdCostBest[CTU_LEVEL] = bestCS->cost;
