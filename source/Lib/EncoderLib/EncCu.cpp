@@ -859,45 +859,40 @@ void EncCu::xCompressCU( CodingStructure*& tempCS, CodingStructure*& bestCS, Par
 
     if( currTestMode.type == ETM_INTER_ME )
     {
-#if ENABLE_OPT_TECH_DT
-      if(! OptTechDT::skipCheckRD) {
-#endif
-        if( ( currTestMode.opts & ETO_IMV ) != 0 )
+      if( ( currTestMode.opts & ETO_IMV ) != 0 )
+      {
+        const bool skipAltHpelIF = (currTestMode.getAmvrSearchMode() == EncTestMode::AmvrSearchMode::HALF_PEL)
+                                  && (bestIntPelCost > 1.25 * bestCS->cost);
+        if (!skipAltHpelIF)
         {
-          const bool skipAltHpelIF = (currTestMode.getAmvrSearchMode() == EncTestMode::AmvrSearchMode::HALF_PEL)
-                                    && (bestIntPelCost > 1.25 * bestCS->cost);
-          if (!skipAltHpelIF)
-          {
-            tempCS->bestCS = bestCS;
-            xCheckRDCostInterAmvr(tempCS, bestCS, partitioner, currTestMode, bestIntPelCost);
-            tempCS->bestCS = nullptr;
-            splitRdCostBest[CTU_LEVEL] = bestCS->cost;
-            tempCS->splitRdCostBest = splitRdCostBest;
-          }
+          tempCS->bestCS = bestCS;
+          xCheckRDCostInterAmvr(tempCS, bestCS, partitioner, currTestMode, bestIntPelCost);
+          tempCS->bestCS = nullptr;
+          splitRdCostBest[CTU_LEVEL] = bestCS->cost;
+          tempCS->splitRdCostBest = splitRdCostBest;
         }
-        else
-        {
+      }
+      else
+      {
+  #if ENABLE_OPT_TECH_DT
+        if(! OptTechDT::skipCheckRD) {
+  #endif
           tempCS->bestCS = bestCS;
           xCheckRDCostInter( tempCS, bestCS, partitioner, currTestMode );
           tempCS->bestCS = nullptr;
           splitRdCostBest[CTU_LEVEL] = bestCS->cost;
           tempCS->splitRdCostBest = splitRdCostBest;
-        }
 #if ENABLE_OPT_TECH_DT
-      }
+        }
 #endif
+      }
+
     }
     else if (currTestMode.type == ETM_HASH_INTER)
     {
-#if ENABLE_OPT_TECH_DT
-      if(! OptTechDT::skipCheckRD) {
-#endif
-        xCheckRDCostHashInter( tempCS, bestCS, partitioner, currTestMode );
-        splitRdCostBest[CTU_LEVEL] = bestCS->cost;
-        tempCS->splitRdCostBest = splitRdCostBest;
-#if ENABLE_OPT_TECH_DT
-      }
-#endif
+      xCheckRDCostHashInter( tempCS, bestCS, partitioner, currTestMode );
+      splitRdCostBest[CTU_LEVEL] = bestCS->cost;
+      tempCS->splitRdCostBest = splitRdCostBest;
     }
 #if REUSE_CU_RESULTS
     else if( currTestMode.type == ETM_RECO_CACHED )
